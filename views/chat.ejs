@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Event Chat: </title>
+    <meta charset="utf-8">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: white; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 50%; margin-right: .5%; }
+      form button { width: 9%; background: grey; border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages { margin-bottom: 40px }
+      #eventInfo { background-color: red; color: white; width: 30%; height: 100%; right: 0; position: absolute}
+
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+    $(function() {
+
+        var socket = io();
+
+        var room = $("#title").text();
+        console.log(room);
+
+        $('form').submit(function(){
+            socket.emit('chat message', $("#message").val());
+            $("#message").val("");
+            return false;
+        });
+        //if anyone sends a message, view it here.
+        socket.on('chat message', function(msg){
+          console.dir(msg);
+          $("#messages").append($("<li>").text(msg));
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="eventInfo"></div>
+    <div>
+      <h1 id="title"><%= title %></h1>
+    </div>
+    <form>
+			<input type="text" id="message" autocomplete="off" autofocus><button>Send</button>
+		</form>
+		<ul id="messages"></ul>
+  </body>
+</html>

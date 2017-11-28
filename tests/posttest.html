@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing post</title>
+    <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <button onclick="doPost()">Post</button>
+    <button onclick="doPut()">Put</button>
+    <script>
+
+      function doPost(){
+        var testData = {
+          "title": "Another tested post request",
+          "address": "243 Ash Grove Rd"
+        }
+
+        console.log(testData);
+
+        $.post("/dbInsert", testData, function(data){
+          console.log("Data: " + data);
+          console.log("hmm");
+        });
+
+      }
+
+      function doPut(){
+        $.ajax({
+          url: 'dbRemoveGuests/5a1c7dff8cc4c257130d1334',
+          type: 'PUT',
+          success: function(response) {
+            console.log(response);
+          }
+        });
+      }
+
+    </script>
+  </body>
+</html>

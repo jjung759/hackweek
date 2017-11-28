@@ -1,0 +1,19 @@
+{
+  "name": "4830hackweek",
+  "version": "1.0.0",
+  "description": "Testing folder for hackweek projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.16.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "mongodb": "^2.2.33",
+    "socket.io": "^2.0.4"
+  }
+}
