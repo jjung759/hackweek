@@ -22,9 +22,11 @@ app.use(bodyParser.json());
 //change later.
 app.set('view engine', 'ejs');
 
+
+
 //index.html, will be set to angular app once that's actually created
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/content/pages/index.html');
+  res.sendFile(__dirname + '/views/index.html');
 });
 
 //Testing url to check for dynamic chat room functionality
@@ -33,6 +35,10 @@ app.get('/testChatRender', function(req, res){
   res.render('chat', {
     title: title
   });
+})
+
+app.get('/testGet', function(req, res){
+  res.sendFile(__dirname + '/tests/testget.html');
 })
 
 app.get('/chat/:id', function(req, res){
