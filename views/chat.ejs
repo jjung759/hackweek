@@ -21,14 +21,26 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
     $(function() {
+        var nickname = prompt("Who are you?");
 
-        var socket = io();
+        var socket = io.connect();
 
         var room = $("#title").text();
         console.log(room);
 
+        socket.on('connect', function() {
+          socket.emit('room', room);
+        })
+
+
         $('form').submit(function(){
-            socket.emit('chat message', $("#message").val());
+            k = $("#message").val();
+            var msgDetails = {
+              msg: k,
+              room: room,
+              name: nickname
+            }
+            socket.emit('chat message', msgDetails);
             $("#message").val("");
             return false;
         });
@@ -41,7 +53,9 @@
     </script>
   </head>
   <body>
-    <div id="eventInfo"></div>
+    <div id="eventInfo">
+      <span><h1>Event Details: </h1></span>
+    </div>
     <div>
       <h1 id="title"><%= title %></h1>
     </div>

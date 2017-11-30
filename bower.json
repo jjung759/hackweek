@@ -1,0 +1,14 @@
+{
+  "name": "hackweek",
+  "description": "Testing folder for hackweek projects",
+  "main": "index.js",
+  "license": "ISC",
+  "homepage": "https://github.com/jjung759/hackweek",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

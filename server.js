@@ -1,4 +1,5 @@
 var app = require('express')();
+var express = require('express');
 var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var io = require('socket.io')(http);
@@ -22,7 +23,7 @@ app.use(bodyParser.json());
 //change later.
 app.set('view engine', 'ejs');
 
-
+app.use('/js', express.static(__dirname + '/static/assets/js/'));
 
 //index.html, will be set to angular app once that's actually created
 app.get('/', function(req, res){
@@ -171,14 +172,20 @@ app.put('/dbRemoveGuests/:id', function(req, res){
 io.on('connection', function(socket){
   console.log("User connected");
 
+  socket.on('room', function(room){
+    socket.join(room);
+  });
+
   socket.on('disconnect', function(){
     console.log("user disconnected");
   });
 
 
   socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
+    console.log('message: ' + msg.msg);
+    console.log('room: ' + msg.room);
+    console.log('name: ' + msg.name);
+    io.to(msg.room).emit('chat message', msg.name + ": " + msg.msg);
   });
 });
 
