@@ -38,19 +38,48 @@ app.get('/testChatRender', function(req, res){
   });
 })
 
+//More testing url
 app.get('/testGet', function(req, res){
   res.sendFile(__dirname + '/tests/testget.html');
 })
 
+//Based off of URL parameters, a chat roomm is generated based off of Mongo info
 app.get('/chat/:id', function(req, res){
-  var title = req.params.id;
-  res.render('chat', {
-    title: title
-  });
+  var id = req.params.id;
+  var title;
+  MongoClient.connect(url, function (err, database){
+    if (err) {
+      console.log(err);
+      console.log("Problem Here!");
+      process.exit(1);
+    }
+    db = database;
+    console.log("database connection ready");
 
-})
+
+    db.collection("eventsTest").findOne({ _id: new ObjectID(req.params.id) }, function(err, doc) {
+      if (err) {
+        handleError(res, err.message, "Failed to get event");
+      } else {
+        title = doc.title;
+        var going = doc.Going;
+        var addr = doc.address;
+
+          res.render('chat', {
+            title: title,
+            address: addr,
+            attendees: going
+          });
+      }
+    });
+
+    });
+});
+
+//testing for chat rooms
 app.get('/diffRoom', function(req, res){
   var title = "diff room";
+
   res.render('chat', {
     title: title
   });
@@ -97,6 +126,8 @@ app.post('/dbInsert', function(req, res) {
 
     var newEvent = req.body;
 
+    newEvent.Going = 1;
+
     console.log
 
     db.collection("eventsTest").insertOne(newEvent, function(err, doc){
@@ -129,8 +160,10 @@ app.put('/dbAddGuests/:id', function(req, res){
     db.collection("eventsTest").updateOne({_id: ObjectID(id)},{$inc:{'Going': 1}}, function(err, doc){
       if (err) {
         handleError(res, err.message, "failed to update");
+        res.status(500).json({ error: "save failed", err: err});
       } else {
-        res.status(201).json(doc.ops[0]);
+        res.status(201).json({"updated": "true"});
+        return;
       }
     });
   });
@@ -158,6 +191,8 @@ app.put('/dbRemoveGuests/:id', function(req, res){
       if (err) {
         handleError(res, err.message, "failed to update");
       } else {
+        res.status(201).json({"updated": "true"});
+
       console.log("Record updated");
       }
     });
@@ -166,7 +201,7 @@ app.put('/dbRemoveGuests/:id', function(req, res){
 
 
 /*Chat functionality, for now:
-  Will be buffing out with functionality for dynamic chat rooms
+  handles dynamic chat room messaging
 */
 
 io.on('connection', function(socket){

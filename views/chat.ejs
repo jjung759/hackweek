@@ -10,17 +10,20 @@
       form { background: white; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 50%; margin-right: .5%; }
       form button { width: 9%; background: grey; border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
+      #messages { list-style-type: none; margin: 0; padding: 0; font-size: 1.3em;}
+      #messages li { padding: 5px 10px; text-overflow: ellipsis;}
+      #messages li:nth-child(odd) { background: #e8f0ff; } 
       #messages { margin-bottom: 40px }
       #eventInfo { background-color: red; color: white; width: 30%; height: 100%; right: 0; position: absolute}
 
     </style>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+
     <script>
     $(function() {
+
         var nickname = prompt("Who are you?");
 
         var socket = io.connect();
@@ -54,7 +57,47 @@
   </head>
   <body>
     <div id="eventInfo">
-      <span><h1>Event Details: </h1></span>
+      <span><h1 id="address"><%= address %> </h1></span>
+      <span><h1>Attending: <%= attendees %></h1></span>
+      <div id="map" style="width: 100%; height: 45%;"></div>
+      <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSc0EHKQZuec24JL_x_sKAbGFsVBqY2Uk&callback=doThis"
+  type="text/javascript"></script>
+      <script>
+          function doThis(){
+
+                  var geocoder;
+                  var map;
+                   function initialize() {
+                     geocoder = new google.maps.Geocoder();
+                     var latlng = new google.maps.LatLng(-34.397, 150.644);
+                     var mapOptions = {
+                       zoom: 17,
+                       center: latlng
+                     }
+                     map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                     codeAddress();
+                   }
+
+                   function codeAddress() {
+                     var address =  <%- JSON.stringify(address) %>
+                     geocoder.geocode( { 'address': address}, function(results, status) {
+                       if (status == 'OK') {
+                         map.setCenter(results[0].geometry.location);
+                         var marker = new google.maps.Marker({
+                             map: map,
+                             position: results[0].geometry.location
+                         });
+                       } else {
+                         console.log(address);
+                         var k = document.getElementById('map');
+                         k.style.display = 'none';
+                       }
+                     });
+                   }
+
+                   initialize();
+          }
+      </script>
     </div>
     <div>
       <h1 id="title"><%= title %></h1>
